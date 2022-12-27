@@ -1,0 +1,172 @@
+<!-- Stylish Style -->
+
+<style>
+     .textbox {
+      padding: 20px 30px;
+      font-size: 24px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      border: 2px solid black;
+
+     }
+     .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  </style>
+
+<!-- Wonderful Table -->
+
+<table id="Table">
+    <div>Enter Alleles Below!</div>
+    <input type="text" id="userInput">
+    <input type="text" id="userInput2">
+    <button onclick="createSquares()">Calculate</button>
+
+    <div id="container" class="container" ></div>
+</table>
+
+<!-- Gorgeous Script -->
+
+<script>
+  function allUppercase(str) {
+      return /^[A-Z]+$/.test(str);
+  }
+
+  function hasUppercase(string) {
+  return string.match(/[A-Z]/);
+  }
+
+ function dominance(str) {
+      if (hasUppercase(str)) {
+          return str.toUpperCase();
+      } else {
+        return str;
+      }
+    }
+
+function createTable(data) {
+ // Remove any existing table element from the document
+  var oldTable = document.querySelector('table');
+  if (oldTable) {
+    oldTable.parentNode.removeChild(oldTable);
+  }
+
+  var size = Math.ceil(Math.sqrt(data.length));
+  var table = document.createElement('table');
+  table.border = "1";
+  var tableBody = document.createElement('tbody');
+
+  for (var i = 0; i < size; i++) {
+    var row = document.createElement('tr');
+
+    for (var j = 0; j < size; j++) {
+      var cell = document.createElement('td');
+      var index = i * size + j;
+      if (index < data.length) {
+        cell.innerHTML = data[index];
+      }
+      row.appendChild(cell);
+    }
+
+    tableBody.appendChild(row);
+  }
+
+  table.appendChild(tableBody);
+  document.body.appendChild(table);
+}
+
+function handleIncorrectInput(ErrorMessage) {
+  // Remove all elements from the page
+  var elements = document.querySelectorAll('body *');
+  elements.forEach(function(element) {
+    element.parentNode.removeChild(element);
+  });
+
+  // Display a message saying "Incorrect Input!"
+  var message = document.createElement('div');
+  message.innerHTML = ErrorMessage;
+  document.body.appendChild(message);
+    // Wait 2 seconds before reloading the page
+  setTimeout(function() {
+    location.reload();
+  }, 2000);
+}
+
+function foundErrorString(str) {
+  for (let i = 0; i < str.length; i++) {
+     var addon = 0;
+     if (i > 0) {
+         addon = 1;
+     }
+    var head = str.substring(i + addon, i + 1 + addon);
+    var feet = str.substring(i + 1 + addon, i + 1 + addon);
+    if (!(head.toUpperCase() == feet.toUpperCase())) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+
+  function createSquares() {
+    // Get the user input
+    var userInput = document.getElementById("userInput").value;
+    var userInput2 = document.getElementById("userInput2").value;
+
+    if (userInput.length != userInput2.length) {
+        handleIncorrectInput("Your two alleles aren't the same!");
+        return;
+    }
+    if (!((userInput.length % 2) == 0)) {
+        handleIncorrectInput("Your alleles aren't right!");
+        return;
+    }
+        if (foundErrorString(userInput)) {
+handleIncorrectInput("No Codominance or Incomplete Dominance");
+}
+
+
+    // if cannot be divided by 2 then say it doesn't work!!
+    // If userInput.length != userInput2.length then say it doesn't work either!!
+
+    var genotypes = [];
+    var genotypesText = "";
+       for (let i = 0; i < userInput.length; i++) {
+           for (let j = 0; j < userInput2.length; j++) {
+               var thusband = userInput.substring(i, i+1);
+               var twife = userInput2.substring(j, j+1);
+
+
+               genotypes.push(thusband + twife);
+               genotypesText += thusband + twife + ', ';
+           }
+       }
+
+    var phenotypes = '';
+       for (let i = 0; i < userInput.length; i++) {
+           for (let j = 0; j < userInput2.length; j++) {
+               var thusband = userInput.substring(i, i+1);
+               var twife = userInput2.substring(j, j+1);
+               var result = dominance(thusband + twife) + ', ';
+               if (!phenotypes.includes(result)) {
+                    phenotypes += dominance(thusband + twife) + ', ';
+               }
+           }
+       }
+
+
+    // Design
+    var squaresHTML = '<div class="textbox">' + 'Possible Phenotypes: ' + phenotypes + '</div>';
+
+    // Insert the squares into the "container" element
+    document.getElementById("container").innerHTML = squaresHTML;
+    createTable(genotypes);
+
+    // ABABABABABABAB
+  }
+</script>
